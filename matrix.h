@@ -206,5 +206,24 @@ Matrix Matrix:: operator*(const Matrix& other) const{
     }
     return result;
 }
-
+Matrix& Matrix:: operator*=(const Matrix& other){
+    *this = *this * other;
+    return *this;
+}
+Matrix Matrix:: operator+(const Matrix& other) const{
+    if(r!=other.r || c!=other.c){  
+        throw invalid_argument("Matrix dimensions are not compatible");
+    }
+    Matrix result(r,c);  
+    for(size_t i =0;i<r;++i){
+        for(size_t j =0;j<c;++j){
+            result.mat_data[i*c+j] = mat_data[i*c+j] + other.mat_data[i*c+j];
+        }
+    }
+    return result;
+}
+Matrix& Matrix:: operator+=(const Matrix& other){
+    *this = *this + other;
+    return *this;
+}
 #endif // MATRIX_H

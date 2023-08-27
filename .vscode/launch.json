@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/git/Linear_Algebra_Project",
-      "program": "d:/git/Linear_Algebra_Project/build/Debug/outDebug",
+      "cwd": "d:/git/LinAlgProject",
+      "program": "d:/git/LinAlgProject/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

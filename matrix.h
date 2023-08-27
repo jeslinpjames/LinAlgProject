@@ -270,5 +270,79 @@ bool Matrix:: operator==(const Matrix& other) const{
 bool Matrix:: operator!=(const Matrix& other) const{
     return !(*this == other);
 }
+vector<double> Matrix:: column(size_t col) const{
+    if (col >= c) {
+        throw out_of_range("Column index out of range");
+    }
+    vector<double> columnData;
+    columnData.reserve(r);
+    for (size_t i = 0; i < r; ++i) {
+        columnData.push_back(mat_data[i * c + col]);
+    }
+}
+vector<double> Matrix :: row(size_t row) const{
+    if (row >= r) {
+        throw out_of_range("Row index out of range");
+    }
+    vector<double> rowData;
+    rowData.reserve(c);
+    for (size_t i = 0; i < c; ++i) {
+        rowData.push_back(mat_data[row * c + i]);
+    }
+}
 
+Matrix Matrix ::sub_matrix(size_t start_row, size_t start_col, size_t end_row, size_t end_col) const{
+    if (start_row >= r || start_col >= c || end_row >= r || end_col >= c) {
+        throw out_of_range("Submatrix indices are out of range");
+    }
+    
+    size_t sub_rows = end_row - start_row + 1;
+    size_t sub_cols = end_col - start_col + 1;
+    Matrix submatrix(sub_rows, sub_cols);
+    for (size_t i = start_row; i <= end_row; ++i) {
+        for (size_t j = start_col; j <= end_col; ++j) {
+            submatrix.mat_data.push_back(mat_data[i * c + j]);
+        }
+    }
+
+    return submatrix;
+}
+pair<size_t, size_t> Matrix:: shape() const{
+    return make_pair(r,c);
+}
+void Matrix:: reshape(size_t new_rows, size_t new_cols){
+    if (r * c != new_rows * new_cols) {
+        throw invalid_argument("New shape must be compatible with the original shape");
+    }
+    r = new_rows;
+    c = new_cols;
+}
+void Matrix:: add_row(const vector<double>& new_row){
+    if (new_row.size() != c) {
+            throw invalid_argument("New row size does not match matrix's number of columns");
+        }
+    mat_data.insert(mat_data.end(), new_row.begin(), new_row.end());
+    r++;    
+}
+void Matrix::add_column(const vector<double>& new_col){
+    if (new_col.size() != r) {
+            throw invalid_argument("New column size does not match matrix's number of rows");
+        }
+    for (size_t i = 0; i < r; ++i) {
+            mat_data.insert(mat_data.begin() + (i * (c + 1)), new_col[i]);
+        }
+    c++;    
+}
+void Matrix:: sort_matrix(size_t col){
+
+}
+Matrix Matrix:: transpose() const{
+    Matrix transposed(c,r);  
+    for(size_t i =0;i<r;++i){
+        for(size_t j =0;j<c;++j){
+            transposed.mat_data[j*r+i] = mat_data[i*c+j];
+        }
+    }
+    return transposed;
+}
 #endif // MATRIX_H

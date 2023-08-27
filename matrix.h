@@ -226,4 +226,49 @@ Matrix& Matrix:: operator+=(const Matrix& other){
     *this = *this + other;
     return *this;
 }
+Matrix Matrix:: operator-(const Matrix& other) const{
+    if(r!=other.r || c!=other.c){  
+        throw invalid_argument("Matrix dimensions are not compatible");
+    }
+    Matrix result(r,c);  
+    for(size_t i =0;i<r;++i){
+        for(size_t j =0;j<c;++j){
+            result.mat_data[i*c+j] = mat_data[i*c+j] - other.mat_data[i*c+j];
+        }
+    }
+    return result;
+}
+ Matrix& Matrix:: operator-=(const Matrix& other){
+    *this = *this - other;
+    return *this;
+}
+Matrix Matrix:: operator/(double scalar) const{
+    if (scalar == 0.0) {
+        throw runtime_error("Division by zero");
+    }
+    Matrix result(r,c);  
+    for(size_t i =0;i<r;++i){
+        for(size_t j =0;j<c;++j){
+            result.mat_data[i*c+j] = mat_data[i*c+j] / scalar;
+        }
+    }
+    return result;
+}
+bool Matrix:: operator==(const Matrix& other) const{
+    if(r!=other.r || c!=other.c){  
+        return false;
+    }
+    for(size_t i =0;i<r;++i){
+        for(size_t j =0;j<c;++j){
+            if(mat_data[i*c+j] != other.mat_data[i*c+j]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+bool Matrix:: operator!=(const Matrix& other) const{
+    return !(*this == other);
+}
+
 #endif // MATRIX_H

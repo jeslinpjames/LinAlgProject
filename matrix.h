@@ -190,4 +190,21 @@ Matrix::Matrix(const string& filename) {
     }
 }
 
+Matrix Matrix:: operator*(const Matrix& other) const{
+    if(c!=other.r){  
+        throw invalid_argument("Matrix dimensions are not compatible");
+    }
+    Matrix result(r,other.c);  
+    for(size_t i =0;i<r;++i){
+        for(size_t j =0;j<other.c;++j){
+            double sum =0.0;
+            for(size_t k =0;k<c;++k){
+                sum+=mat_data[i*c+k]*other.mat_data[k*other.c+j];
+            }
+            result.mat_data[i*other.c+j] = sum;
+        }
+    }
+    return result;
+}
+
 #endif // MATRIX_H

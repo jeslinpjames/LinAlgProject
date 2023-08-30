@@ -52,7 +52,7 @@ using namespace std;
 
 class Matrix {
 private:
-    size_t r;  
+    size_t r;
     size_t c;
     vector<double> mat_data;
 
@@ -82,14 +82,9 @@ public:
     void reshape(size_t new_rows, size_t new_cols);
     void add_row(const vector<double>& new_row);
     void add_column(const vector<double>& new_col);
-    void remove_column(size_t col);
-    void reorder_column(size_t col, const vector<size_t>& order);
-    void sort_matrix(size_t col);
-    Matrix transpose() const;
-    static Matrix Id(size_t size);
-    double sum() const;
-    double avg() const;
-    void head() const;
+    void remove_column(size_t x);
+    void remove_row(size_t x);
+    Matrix transpose()const;
     void print() const;
     void to_csv(const string& filename) const;
 
@@ -101,6 +96,7 @@ public:
     // Other utility functions
 
 };
+
 Matrix::Matrix(size_t rows, size_t cols){
     r = rows;  
     c = cols;  
@@ -333,9 +329,26 @@ void Matrix::add_column(const vector<double>& new_col){
         }
     c++;    
 }
-void Matrix:: sort_matrix(size_t col){
-
+void Matrix:: remove_column(size_t x){
+    if (x >= c) {
+        throw out_of_range("Column index out of range");
+    }
+    for (size_t i = 0; i < r; ++i) {
+            mat_data.erase(mat_data.begin() + (i * c) + x);
+        }
+    c--;    
 }
+void Matrix::remove_row(size_t x){
+    if (x >= r) {
+        throw out_of_range("Row index out of range");
+    }
+    mat_data.erase(mat_data.begin() + (x * c), mat_data.begin() + ((x + 1) * c));
+    r--;    
+}
+
+// void Matrix:: sort_matrix(size_t col){
+
+// }
 Matrix Matrix:: transpose() const{
     Matrix transposed(c,r);  
     for(size_t i =0;i<r;++i){
@@ -345,4 +358,7 @@ Matrix Matrix:: transpose() const{
     }
     return transposed;
 }
+// static Matrix Matrix::Id(size_t size){
+    
+// }
 #endif // MATRIX_H

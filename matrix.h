@@ -87,7 +87,10 @@ public:
     void reorder_column(size_t col, const vector<size_t>& order);
     Matrix T() const ;
     friend Matrix transpose(const Matrix& matrix);
+    Matrix Id(size_t size);
+    double sum() const ;
     void print() const;
+    double avg() const ;
     void to_csv(const string& filename) const;
 
     // Non-member functions
@@ -381,6 +384,36 @@ Matrix transpose(const Matrix& matrix) {
         }
     }
     return transposed;
+}
+
+Matrix Matrix::Id(size_t size) {
+    Matrix identity(size, size); // Create a square matrix of the given size
+    for (size_t i = 0; i < size; ++i) {
+        for (size_t j = 0; j < size; ++j) {
+            if (i == j) {
+                identity.mat_data[i * size + j] = 1.0; // Set diagonal elements to 1
+            } else {
+                identity.mat_data[i * size + j] = 0.0; // Set non-diagonal elements to 0
+            }
+        }
+    }
+    return identity;
+}
+double Matrix::sum() const {
+    double totalSum = 0.0;
+    for (const double& value : mat_data) {
+        totalSum += value;
+    }
+    return totalSum;
+}
+double Matrix::avg() const {
+    if (mat_data.empty()) {
+        throw runtime_error("Matrix is empty, cannot calculate average.");
+    }
+
+    double totalSum = sum();
+    size_t totalElements = mat_data.size();
+    return totalSum / static_cast<double>(totalElements);
 }
 
 // static Matrix Matrix::Id(size_t size){

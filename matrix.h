@@ -84,7 +84,9 @@ public:
     void add_column(const vector<double>& new_col);
     void remove_column(size_t x);
     void remove_row(size_t x);
-    Matrix transpose()const;
+    void reorder_column(size_t col, const vector<size_t>& order);
+    Matrix T() const ;
+    friend Matrix transpose(const Matrix& matrix);
     void print() const;
     void to_csv(const string& filename) const;
 
@@ -345,19 +347,42 @@ void Matrix::remove_row(size_t x){
     mat_data.erase(mat_data.begin() + (x * c), mat_data.begin() + ((x + 1) * c));
     r--;    
 }
-
-// void Matrix:: sort_matrix(size_t col){
-
-// }
-Matrix Matrix:: transpose() const{
-    Matrix transposed(c,r);  
-    for(size_t i =0;i<r;++i){
-        for(size_t j =0;j<c;++j){
-            transposed.mat_data[j*r+i] = mat_data[i*c+j];
+void Matrix::reorder_column(size_t col, const vector<size_t>& order) {
+    if (col >= c) {
+        throw out_of_range("Column index out of range");
+    }
+    if (order.size() != r) {
+        throw invalid_argument("Order vector size does not match matrix's number of rows");
+    }
+    vector<double> reorderedColumn;
+    reorderedColumn.reserve(r);
+    for (size_t i = 0; i < r; ++i) {
+        reorderedColumn.push_back(mat_data[i * c + col]);
+    }
+    for (size_t i = 0; i < r; ++i) {
+        mat_data[i * c + col] = reorderedColumn[order[i]];
+    }
+}
+ Matrix Matrix::T() const {
+    Matrix transposed(c, r);  // Create a new matrix with swapped dimensions
+    for (size_t i = 0; i < r; ++i) {
+        for (size_t j = 0; j < c; ++j) {
+            transposed.mat_data[j * r + i] = mat_data[i * c + j]; // Transpose the elements
         }
     }
     return transposed;
 }
+
+Matrix transpose(const Matrix& matrix) {
+    Matrix transposed(matrix.c, matrix.r); // Create a new matrix with swapped dimensions
+    for (size_t i = 0; i < matrix.r; ++i) {
+        for (size_t j = 0; j < matrix.c; ++j) {
+            transposed.mat_data[j * matrix.r + i] = matrix.mat_data[i * matrix.c + j]; // Transpose the elements
+        }
+    }
+    return transposed;
+}
+
 // static Matrix Matrix::Id(size_t size){
     
 // }

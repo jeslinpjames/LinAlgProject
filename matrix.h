@@ -85,6 +85,7 @@ public:
     void remove_column(size_t x);
     void remove_row(size_t x);
     void reorder_column(size_t col, const vector<size_t>& order);
+    void sort_matrix(size_t column);
     Matrix T() const ;
     friend Matrix transpose(const Matrix& matrix);
     Matrix Id(size_t size);
@@ -368,7 +369,7 @@ void Matrix::reorder_column(size_t col, const vector<size_t>& order) {
         mat_data[i * c + col] = reorderedColumn[order[i]];
     }
 }
-void sort_matrix(size_t column) {
+void Matrix::sort_matrix(size_t column) {
     if (column >= c) {
         throw out_of_range("Column index out of range");
     }
@@ -482,7 +483,62 @@ void Matrix::to_csv(const string& filename) const {
 
     file.close(); // Close the file when done
 }
+static Matrix  diag_matrix(const vector<double>& diagValues) {
+    size_t size = diagValues.size();
+    Matrix diagonalMatrix(size, size);
+    for (size_t i = 0; i < size; ++i) {
+        diagonalMatrix.mat_data[i * size + i] = diagValues[i];
+    }
+    
+    return diagonalMatrix;
+}
+bool Matrix::is_triangular() const {
+    if (r != c) return false;
+    for (size_t i = 0; i < r; ++i) {
+        for (size_t j = 0; j < i; ++j) {
+            if (mat_data[i * c + j] != 0.0) return false;
+        }
+    }
+    for (size_t i = 0; i < r; ++i) {
+        for (size_t j = i + 1; j < c; ++j) {
+            if (mat_data[i * c + j] != 0.0) return false;
+        }
+    }
+    return true;
+}
+Matrix LU_Decomposition(const Matrix& matrix) {
+    if (matrix.r != matrix.c) {
+        throw runtime_error("LU decomposition requires a square matrix");
+    }
 
+    size_t n = matrix.r;
+    Matrix L(n, n);
+    Matrix U(n, n);
+
+    for (size_t i = 0; i < n; ++i) {
+        L.mat_data[i * n + i] = 1.0;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = i; j < n; ++j) {
+            double sum = 0.0;
+            for (size_t k = 0; k < i; ++k) {
+                sum += L.mat_data[i * n + k] * U.mat_data[k * n + j];
+            }
+            U.mat_data[i * n + j] = matrix.mat_data[i * n + j] - sum;
+        }
+
+        for (size_t j = i + 1; j < n; ++j) {
+            double sum = 0.0;
+            for (size_t k = 0; k < i; ++k) {
+                sum += L.mat_data[j * n + k] * U.mat_data[k * n + i];
+            }
+            L.mat_data[j * n + i] = (matrix.mat_data[j * n + i] - sum) / U.mat_data[i * n + i];
+        }
+    }
+
+    return L;
+}
 
 // static Matrix Matrix::Id(size_t size){
     

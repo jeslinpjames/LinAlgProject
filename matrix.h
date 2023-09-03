@@ -89,7 +89,9 @@ public:
     friend Matrix transpose(const Matrix& matrix);
     Matrix Id(size_t size);
     double sum() const ;
+    void head() const ;
     void print() const;
+    void to_csv(const string& filename) const;
     double avg() const ;
     void to_csv(const string& filename) const;
 
@@ -366,6 +368,28 @@ void Matrix::reorder_column(size_t col, const vector<size_t>& order) {
         mat_data[i * c + col] = reorderedColumn[order[i]];
     }
 }
+void sort_matrix(size_t column) {
+    if (column >= c) {
+        throw out_of_range("Column index out of range");
+    }
+    vector<pair<double, size_t>> columnDataWithIndices;
+    columnDataWithIndices.reserve(r);
+    for (size_t i = 0; i < r; ++i) {
+        columnDataWithIndices.emplace_back(mat_data[i * c + column], i);
+    }
+    sort(columnDataWithIndices.begin(), columnDataWithIndices.end(),
+         [](const auto& a, const auto& b) { return a.first < b.first; });
+    Matrix sortedMatrix(r, c);
+    for (size_t i = 0; i < r; ++i) {
+        size_t sortedRowIndex = columnDataWithIndices[i].second;
+        for (size_t j = 0; j < c; ++j) {
+            sortedMatrix.mat_data[i * c + j] = mat_data[sortedRowIndex * c + j];
+        }
+    }
+
+    // Copy the sorted matrix back to the original matrix
+    mat_data = sortedMatrix.mat_data;
+}
  Matrix Matrix::T() const {
     Matrix transposed(c, r);  // Create a new matrix with swapped dimensions
     for (size_t i = 0; i < r; ++i) {
@@ -415,6 +439,50 @@ double Matrix::avg() const {
     size_t totalElements = mat_data.size();
     return totalSum / static_cast<double>(totalElements);
 }
+void Matrix::head() const {
+    if (r == 0 || c == 0) {
+        cout << "Matrix is empty." << endl;
+        return;
+    }
+
+    cout << "First row of the matrix:" << endl;
+    for (size_t j = 0; j < c; ++j) {
+        cout << mat_data[j] << " ";
+    }
+    cout << endl;
+}
+void Matrix::print(const string& additionalString, double additionalValue) const {
+    cout << "Matrix Contents:" << endl;
+    for (size_t i = 0; i < r; ++i) {
+        for (size_t j = 0; j < c; ++j) {
+            cout << setw(8) << mat_data[i * c + j] << " "; // Adjust the width as needed
+        }
+        cout << endl;
+    }
+
+    cout << "Additional String: " << additionalString << endl;
+    cout << "Additional Value: " << additionalValue << endl;
+}
+void Matrix::to_csv(const string& filename) const {
+    ofstream file(filename); // Open the file for writing
+
+    if (!file.is_open()) {
+        throw runtime_error("Failed to open CSV file for writing");
+    }
+
+    for (size_t i = 0; i < r; ++i) {
+        for (size_t j = 0; j < c; ++j) {
+            file << mat_data[i * c + j];
+            if (j < c - 1) {
+                file << ','; // Add a comma between values, except for the last value in a row
+            }
+        }
+        file << endl; // Start a new line after each row
+    }
+
+    file.close(); // Close the file when done
+}
+
 
 // static Matrix Matrix::Id(size_t size){
     

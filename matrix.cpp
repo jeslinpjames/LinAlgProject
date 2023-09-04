@@ -509,7 +509,7 @@ int main() {
     mat4.print("Additional String for Matrix 4:", mat4.sum());
     std::cout << std::endl;
 
-    // Perform matrix operations
+    Perform matrix operations
     Matrix result1 = mat1 + mat2;
     std::cout << "Matrix 1 + Matrix 2:" << std::endl;
     result1.print("Additional String for Result 1:", result1.sum());
@@ -533,7 +533,7 @@ int main() {
     submat.print("Additional String for Submatrix:", submat.sum());
     std::cout << std::endl;
 
-    // Add more tests for other functions as needed
+    Add more tests for other functions as needed
 
     return 0;
 }
